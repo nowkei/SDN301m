@@ -4,12 +4,16 @@ import { userController } from '../controllers/index.js'
 
 const userRouter = express.Router()
 
-userRouter.get('/', async(req, res) =>{
-  
+userRouter.get('/', async  (req, res) =>{
+  userController.getAllUsers(req,res)
 })
 
 userRouter.get('/:id', async(req, res) =>{
-    res.send("Get users by users id ")
+    userController.getUserById(req,res)
+})
+
+userRouter.delete('/delete/:id', async(req, res) => {
+    userController.deleteUserById(req, res)
 })
 
 userRouter.post('/register',
@@ -29,8 +33,8 @@ userRouter.post('/login',
     // }
     )
 
-userRouter.put('/edit', async(req, res) =>{
-    res.send("Edit an User")
+userRouter.put('/edit/:id', async(req, res) =>{
+    userController.editUserById(req, res)
 })
 
 export default userRouter

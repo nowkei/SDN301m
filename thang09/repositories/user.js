@@ -32,6 +32,74 @@ const login = async ({email, password}) => {
    
 } 
 
+const deleteUserById = async (id, data) => {
+    try {
+        const getById = await User.findOne({_id : id});
+        if(getById === null){
+           return {
+            message: "not found"
+           } 
+        }
+        const deleteUser = await User.deleteOne({_id : id}); 
+        
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const editUserById = async (id, data) => {
+    try {
+        const getById = await User.findOne({_id : id});
+        if(getById === null){
+           return {
+            message: "not found"
+           } 
+        }
+        const updateUser = await User.findByIdAndUpdate(id, data, {
+          new: true  
+        })
+          return {
+            ...updateUser._doc,
+            password: "******"
+        };
+
+    } catch (error) {
+        console.error(error);
+    }
+} 
+
+const getUsersById = async (id) => {
+    try {
+        const getById = await User.findOne({_id : id});
+        
+          return {
+            ...getById._doc,
+            password : "*******"
+        };
+
+    } catch (error) {
+        console.error(error);
+    }
+} 
+
+const getAllUsers = async () => {
+    try {
+        const getAll = await User.find({});
+        const AllAccount = getAll.map((User) => {
+            return { 
+                ...User._doc,
+                password: '******'
+             }  
+        })      
+          return {
+            AllAccount
+        };
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 const register = async ({
     name,
@@ -40,7 +108,6 @@ const register = async ({
     phoneNumber,
     address
 }) => {
-    debugger
     const UserExisting = await User.findOne({email}).exec()
     if(UserExisting != null){
         throw new Error("User existing.")
@@ -66,5 +133,9 @@ const register = async ({
 
 export default {
     login,
-    register
+    register,
+    getAllUsers,
+    getUsersById,
+    editUserById,
+    deleteUserById
 }

@@ -1,14 +1,62 @@
 import { body, validationResult } from "express-validator"
 import { userRepository } from "../repositories/index.js"
+import { request } from "express"
 
 const getAllUsers = async (req, res) => {
-    
+    try {
+        const allUser = await userRepository.getAllUsers()
+        res.status(200).json({
+            message: 'Get All Users Successfully',
+            data: allUser 
+        })
+    } catch (error) {
+        res.status(500).json({message: error.toString()})
+
+    }
 }
 
 const getUserById = async (req, res) => {
+    try {
+        const id = req.params.id
+        const userByID = await userRepository.getUsersById(id)
+        res.status(200).json({
+            message: 'Get All Users Successfully',
+            data: userByID 
+        })
+    } catch (error) {
+        res.status(500).json({message: error.toString()})
+
+    }
 
 }
 
+const deleteUserById = async ( req, res) => {
+    try {
+        const id = req.params.id
+        const deleteUserByID = await userRepository.deleteUserById(id)
+        res.status(200).json({
+            message: 'delete success' 
+        })
+    } catch (error) {
+        res.status(500).json({message: error.toString()})
+
+    }
+}
+
+const editUserById = async (req, res) => {
+    try {
+        const id = req.params.id
+        const editUserByID = await userRepository.editUserById(id, req.body)
+        res.status(200).json({
+            message: 'edit success',
+            data: editUserByID 
+        })
+    } catch (error) {
+        res.status(500).json({message: error.toString()})
+
+    }
+
+}
 const login = async (req, res) => {
     //Validation done
     const errors = validationResult(req)
@@ -60,5 +108,7 @@ export default {
     getAllUsers,
     getUserById,
     login,
-    register
+    register,
+    editUserById,
+    deleteUserById
 }
