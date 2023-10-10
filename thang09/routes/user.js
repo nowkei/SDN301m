@@ -26,12 +26,11 @@ userRouter.post('/login',
     body("email").isEmail().withMessage('Email invalid format.'),
     body("password").isLength({min:5}).withMessage('Password so short'),
     userController.login
-    // ,async(req, res) =>{
-    // // //debugger
-    // // res.send("Login Users")
-       
-    // }
     )
+
+userRouter.post('/refreshToken', async(req,res) => {
+    userController.refreshToken(req,res)
+})    
 
 userRouter.put('/edit/:id', async(req, res) =>{
     userController.editUserById(req, res)

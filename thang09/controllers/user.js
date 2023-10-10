@@ -1,6 +1,8 @@
 import { body, validationResult } from "express-validator"
-import { userRepository } from "../repositories/index.js"
+import { userRepository } from "../index.js"
 import { request } from "express"
+import jwt from 'jsonwebtoken'
+
 
 const getAllUsers = async (req, res) => {
     try {
@@ -67,17 +69,49 @@ const login = async (req, res) => {
     // Call repository: user
     try {
         const loginUser = await userRepository.login({email, password})
+        console.log("login", loginUser)
+        res.cookie('refreshToken', loginUser.refreshToken, {
+            httpOnly: true, // chi lay dc qua http k lay dc qua js
+            secure: true,// khi nao deloy se chuyen thanh true
+            path: "/",
+            sameSite: 'strict'
+        })
         res.status(200).json({
             message: 'Login sucessfully.',
             data: loginUser
         })
+       
     } catch (error) {
         res.status(500).json({message: error.toString()})
 
     }
     
 }
+const refreshToken = async (req, res) => {
+    try {
+       const refreshToken=(req.cookies.refreshToken);
+        const user = jwt.verify(refreshToken, process.env.REFRESH_KEY_JWT)
+        const accessToken = await jwt.sign(
+            {
+                data: user
+            },
+        process.env.SECRET_KEY_JWT,
+            {
+                expiresIn: "30m"
+            }
+        )
+        res.status(201).json({
+            message: 'Register successfully.',
+            accessToken
+        })
+    } catch (error) {
+        res.status(500).json({
+            errors: error.toString()
+        })
+    }
 
+
+}
 const register = async (req, res) => {
     const errors = validationResult(req.body)
     if(!errors.isEmpty()){
@@ -110,5 +144,6 @@ export default {
     login,
     register,
     editUserById,
-    deleteUserById
+    deleteUserById,
+    refreshToken
 }

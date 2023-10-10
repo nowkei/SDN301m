@@ -1,32 +1,34 @@
-import { Schema, model } from "mongoose"
+
 import mongoose, {ObjectId, Schema} from "mongoose";
 
 // Defined Product schema
 const Product = mongoose.model("Product", new Schema({
     "id": {type: ObjectId},
-    name: {
+    "name": { 
+    type: String,
+    require: true,
+    validate:{
+        validator: (value) => value.length > 3,
+        message: 'Length of name > 3 character'
+    }
+    },
+    "price": { 
+    type: Number,
+    require: true,
+    validate:{
+        validator: (value) => value > 0,
+        message: 'Price must be greater than 0'
+    }
+    },
+    "quantity": {
         type: String,
-        required: [true, "Please enter product name."]
-    },
-    quantity: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    price: {
-        type: Number,
-        required: true
-    },
-    image: {
-        type: String,
-        required: false
+        require: true
     }
 },
 {
-    timestamps: true 
-}
-)
-)
+    timestamps: true
+},
+))
 
 //Create Product model
 export default Product

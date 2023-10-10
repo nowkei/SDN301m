@@ -2,25 +2,40 @@ import User from "../models/User.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
+const refreshToken = () =>{
+
+}
+
 const login = async ({email, password}) => {
     const userExisting = await User.findOne({email}).exec()
     if(userExisting){
         const isMatch = await bcrypt.compare(password, userExisting.password)
         if(isMatch==true){
         //Tao Acces Token bang JWT
-            const accessToken = jwt.sign(
+            const accessToken = await jwt.sign(
                 {
                     data: userExisting
                 },
-            process.env.SECRET_KEY_JWT,
+            process.env.SECRET_KEY_JWT, 
                 {
-                    expiresIn: "2 days"
+                    expiresIn: "20s"
                 }
             )
+            const refreshToken = await jwt.sign(
+                {
+                    data: userExisting
+                },
+            process.env.REFRESH_KEY_JWT,
+                {
+                    expiresIn: "365d"   
+                }    
+            )
+            
             return {
             ...userExisting.toObject(),
             password: "Not show",
-            token: accessToken
+            token: accessToken,
+            refreshToken: refreshToken,
             }
         }else{
             throw new Error("Wrong email and password")
@@ -30,7 +45,7 @@ const login = async ({email, password}) => {
     }
 
    
-} 
+}
 
 const deleteUserById = async (id, data) => {
     try {

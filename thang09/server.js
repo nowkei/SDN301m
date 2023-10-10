@@ -2,12 +2,16 @@ import express from "express";
 import * as dotenv from 'dotenv'
 import { userRouter, productRouter, studentRouter } from "./routes/index.js";
 import connectDB from "./database/database.js";
-// import { connect } from "mongoose";
-// import Product from "./models/productModel.js";
+//khai bao 1 middleware
+import checkToken from "./auth/authentication.js";
+import cookieParser from "cookie-parser";
 dotenv.config()
 const app = express();
 app.use(express.json()) // Config cho express server lam viec voi du lieu theo dinh dang json
 
+// Thiet lap 1 middleware de kiem soat moi request di den express server
+app.use(checkToken)
+app.use(cookieParser())
 
 //Routes: Root Router
 app.get('/', (req, res)=>{
@@ -16,7 +20,7 @@ app.get('/', (req, res)=>{
 
 //Routers:
 app.use('/users', userRouter)
-app.use('/product', productRouter)
+app.use('/products', productRouter)
 app.use('/students', studentRouter)
 
 const port = process.env.PORT || 8080

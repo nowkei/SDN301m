@@ -1,5 +1,5 @@
 import { body, validationResult } from "express-validator"
-import { studentRepository } from "../repositories/index.js"
+import { studentRepository } from "../index.js"
 import { request } from "express"
 
 const getAllStudents = async (req, res) => {
